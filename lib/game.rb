@@ -1,5 +1,6 @@
 require_relative 'players/computer.rb'
 require_relative 'players/human.rb'
+
 class Game
   attr_accessor :player_1, :player_2, :board
   WIN_COMBINATIONS = [

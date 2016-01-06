@@ -6,30 +6,51 @@ class Player::Computer < Player
     #optimal_move(board, 1)
 	end
 
-  def optimal_move(board, depth)
-    move_predictions=ai_starter(board, depth)
-    move_predictions.sort.to_h.keys.last
+  def opponent_token
+    @token=="X" ? "O" : "X"
   end
 
-  def ai_starter(board, depth)
-    #
-    #  make array of possible_moves
-    #  make array of (possible_moves.length) entries of (current board with token in potential move slot) called potential_boards
+  def optimal_move(game_board, depth)
+    cpu_board=CPU_Board.new(game_board.cells)
+    ai_starter(cpu_board, depth).max
+  end
+
+  def ai_starter(cpu_board, depth)
+    #  make array of (possible_moves.length) entries of (current board with token in potential move slot) called possible_moves_boards
+    possible_moves=cpu_board.possible_moves
+    possible_moves_boards = possible_moves.collect do |move_position|
+      new_cpu_board = cpu_board.clone
+      new_cpu_board.update(move_position, self)
+      new_cpu_board
+    end
     #  simulate execution of each possible move of current_player
+    possible_moves_boards.map{|board| ai(board, depth, false)}
     #
-    #  potential_boards.each do |board|
-    #    ai(board, depth)
-    #
+  end
 
 
-    def ai(board, depth) #warning: recursion may occur :P
+  def ai(cpu_board, depth, cpus_turn=true) #warning: recursion may occur :P -  https://youtu.be/Mv9NEXX1VHc
+    optimality=50
+    token=""
+    cpus_turn ? token=@token : token=opponent_token
+    #  return optimality for following values for potential cases:
+    return 100 if cpu_board.winner==@token
+    return 25 if cpu_board.draw?
+    #return default value if a draw
+    return optimality if depth<=0
     #  make array of possible moves
+    possible_moves=cpu_board.possible_moves
+    #  make array of (possible_moves.length) entries of (current board with token in potential move slot) called possible_moves_boards
+    possible_moves_boards = possible_moves.collect do |move_position|
+      new_cpu_board = cpu_board.clone
+      new_cpu_board.update_by_token(move_position, token)
+      new_cpu_board
+    end
     #  simulate execution of each possible move of current_player
-    #  set optimality following values for potential cases: ai won(optimality=100%), opponent won(optimality=0%), draw(optimality=25%)
-    #  return optimality
-    #
+    sub_moves = possible_moves_boards.map{|board| ai(board, depth-1, !cpus_turn)}
+    sub_moves_sum = sub_moves.reduce :+
+    return (optimality+sub_moves_sum)/2
 
-    #returns hash of optimality(%) => move_position
   end
 
 

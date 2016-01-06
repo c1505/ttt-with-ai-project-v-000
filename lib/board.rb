@@ -68,6 +68,8 @@ class Board
   end
 
 
+
+
 end
 
 # a = Board.new
