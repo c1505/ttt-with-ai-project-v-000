@@ -20,7 +20,7 @@ class Board
 		cells[user_input_string.chomp.to_i - 1] # user is entering 1-9.  posiitons are 0-8
 	end
 
-	def update(position_arg, player_object) 
+	def update(position_arg, player_object)
 	#update board when player makes a move
 		#need a player object to complete method
 		#call token on player
@@ -63,8 +63,9 @@ class Board
 	end
 
 
-
-
+  def update(position, player)
+    @cells[position.to_i-1]=player.token
+  end
 
 
 end
