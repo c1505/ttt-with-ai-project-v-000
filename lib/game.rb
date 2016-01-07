@@ -47,8 +47,11 @@ class Game
 
   def turn
     while true
-      move = current_player.move if current_player.type==(:human)
-      move = current_player.move(@board) if current_player.type==(:cpu)
+      if current_player.type==(:human)
+        move = current_player.move
+      elsif current_player.type==(:cpu)
+        move = current_player.move(@board)
+      end
       if @board.valid_move?(move)
         @board.update(move, current_player)
         break
@@ -56,15 +59,17 @@ class Game
       puts "Invalid move, please try again."
       if current_player.type==(:cpu)
         puts "AI can no longer handle it's own strength, the cake was a lie"
+        raise 'An error has occured.'
         break
       end
     end
   end
 
   def play
+    @board.display
     until over? do
-      @board.display
       turn
+      @board.display
     end
     if won?
       puts "Congratulations #{winner}!"
