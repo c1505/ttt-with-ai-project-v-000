@@ -47,17 +47,23 @@ class Game
 
   def turn
     while true
-      move = current_player.move
+      move = current_player.move if current_player.type==(:human)
+      move = current_player.move(@board) if current_player.type==(:cpu)
       if @board.valid_move?(move)
         @board.update(move, current_player)
         break
       end
       puts "Invalid move, please try again."
+      if current_player.type==(:cpu)
+        puts "AI can no longer handle it's own strength, the cake was a lie"
+        break
+      end
     end
   end
 
   def play
     until over? do
+      @board.display
       turn
     end
     if won?

@@ -1,9 +1,15 @@
 require_relative '../player.rb'
 
 class Player::Computer < Player
+  def initialize(token)
+		@token = token
+    @type = :cpu
+	end
+
   def move(board)
-    "1"
-    #optimal_move(board, 1)
+    move = optimal_move(board, 1)
+    puts "CPU selected position #{move}"
+    move
 	end
 
   def opponent_token
@@ -12,7 +18,8 @@ class Player::Computer < Player
 
   def optimal_move(game_board, depth)
     cpu_board=CPU_Board.new(game_board.cells)
-    ai_starter(cpu_board, depth).max
+    results = ai_starter(cpu_board, depth)
+    puts results.to_s
   end
 
   def ai_starter(cpu_board, depth)
@@ -24,8 +31,9 @@ class Player::Computer < Player
       new_cpu_board
     end
     #  simulate execution of each possible move of current_player
-    possible_moves_boards.map{|board| ai(board, depth, false)}
-    #
+    return_value=[]
+    possible_moves_boards.each_with_index{|board, index| return_value << {ai(board, depth, false) => index}}
+    return_value
   end
 
 
@@ -46,6 +54,8 @@ class Player::Computer < Player
       new_cpu_board.update_by_token(move_position, token)
       new_cpu_board
     end
+    puts "got here"
+    puts "#{possible_moves.to_s} - possible_moves"
     #  simulate execution of each possible move of current_player
     sub_moves = possible_moves_boards.map{|board| ai(board, depth-1, !cpus_turn)}
     sub_moves_sum = sub_moves.reduce :+

@@ -1,3 +1,17 @@
 #!/usr/bin/env ruby
 
 require_relative '../config/environment'
+puts("1 or 2 Player mode? (1/2)")
+mode = gets.chomp.strip
+if mode=="2"
+  game=Game.new
+  puts "2 player mode selected"
+elsif mode=="1"
+  cpu = Player::Computer.new("X")
+  player = Player::Computer.new("O")
+  game=Game.new(player, cpu)
+  puts "2 player mode selected"
+end
+puts "...Starting Game..."
+puts ""
+game.play
